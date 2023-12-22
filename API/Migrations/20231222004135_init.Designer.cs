@@ -12,7 +12,7 @@ namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20231222004135_init")]
-    partial class init
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
