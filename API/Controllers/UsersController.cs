@@ -3,6 +3,7 @@ using API.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
+using Serilog.Core;
 
 
 namespace API.Controllers
@@ -11,10 +12,12 @@ namespace API.Controllers
     [Route("api/users")] // api/users
     public class UsersController : ControllerBase
     {
+
         private readonly DataContext _context;
 
         public UsersController(DataContext context)
         {
+
             _context = context;
         }
 
@@ -25,6 +28,8 @@ namespace API.Controllers
             var users = _context.Users.ToList();
 
             return users;
+            
+
         }
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -37,7 +42,7 @@ namespace API.Controllers
             if (user == null)
             {
                 return NotFound();
-            } 
+            }
             return user;
         }
     }
