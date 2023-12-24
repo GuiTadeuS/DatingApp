@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
 using Serilog.Core;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace API.Controllers
@@ -23,9 +24,9 @@ namespace API.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
-        public ActionResult<IEnumerable<AppUser>> GetUSers()
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetUSers()
         {
-            var users = _context.Users.ToList();
+            var users = await _context.Users.ToListAsync();
 
             return users;
             
@@ -35,9 +36,9 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("{id}")] // /api/users/id
-        public ActionResult<AppUser> GetUser(int id) {
+        public async Task<ActionResult<AppUser>> GetUser(int id) {
             
-            var user = _context.Users.Find(id);
+            var user = await _context.Users.FindAsync(id);
             
             if (user == null)
             {
