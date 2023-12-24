@@ -1,0 +1,13 @@
+<button (click)="openModal('confirmation', 1)" class="btn btn-danger">
+  Deletar
+</button>
+
+<jw-modal id="confirmation" class="confirmation">
+  <p style="font-size: large;"><strong>Deseja deletar o produto?</strong></p>
+  <br>
+  <div style="display: flex;flex-direction: row;margin-bottom: 10px;justify-content: space-between;">
+    <button type="submit" class="btn btn-danger" (click)="testOk('confirmation',1)">Teste
+    </button>
+    <button type="submit" class="btn btn-info" (click)="testCancel('confirmation',1)">Cancelar</button>
+  </div>
+</jw-modal>
