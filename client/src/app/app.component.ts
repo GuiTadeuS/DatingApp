@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { ModalComponent, ModalService } from './components/modal';
+import { HttpClient } from '@angular/common/http';
+import { NgControlStatus } from '@angular/forms';
+import { User } from './interfaces/user';
 
 @Component({
   selector: 'app-root',
@@ -10,12 +13,27 @@ import { ModalComponent, ModalService } from './components/modal';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  constructor(private modalService: ModalService) { }
+  title: string = 'Dating App';
 
-  title = 'client';
+  users: User[] = [];
 
+
+  constructor(private modalService: ModalService, private http: HttpClient) { }
+
+  // happens after the constructor
+  ngOnInit(): void {
+    //
+    this.http.get<User[]>('https://localhost:5001/api/users').subscribe({
+      next: data => this.users = data,
+      error: error => console.error('Error:', error),
+      complete: () => console.log("Request has completed")
+    })
+  }
+
+
+  // Modal Configuration
   openModal(text_id: string, product_id: any) {
     this.modalService.open(text_id)
   }
@@ -34,4 +52,5 @@ export class AppComponent {
     this.closeModal(modal_id)
 
   }
+
 }

@@ -1,4 +1,12 @@
-<button (click)="openModal('confirmation', 1)" class="btn btn-danger">
+<h1>{{title}}</h1>
+<ul>
+  @for (user of users; track user.id) {
+  <li>{{user.id}} - {{user.userName}}</li>
+  }
+</ul>
+
+
+<!-- <button (click)="openModal('confirmation', 1)" class="btn btn-danger">
   Deletar
 </button>
 
@@ -10,4 +18,4 @@
     </button>
     <button type="submit" class="btn btn-info" (click)="testCancel('confirmation',1)">Cancelar</button>
   </div>
-</jw-modal>
+</jw-modal> -->
