@@ -42,7 +42,7 @@ app.UseCors(cors =>
 {
     cors.AllowAnyHeader();
     cors.AllowAnyMethod();
-    cors.WithOrigins("http://localhost:4200");
+    cors.WithOrigins("https://localhost:4200");
 });
 
 app.UseAuthorization();
