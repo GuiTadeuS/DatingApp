@@ -1,21 +1,21 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 5000
-ENV ASPNETCORE_URLS=http://+:5000
+EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:8080
 RUN groupadd -g 2000 dotnet \
     && useradd -m -u 2000 -g 2000 dotnet
 USER dotnet
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["API.csproj", "API/"]
-RUN dotnet restore "./API/API.csproj"
-WORKDIR "/src/API"
+COPY ["API/API.csproj", "API/"]
+RUN dotnet restore "API/API.csproj"
 COPY . .
-RUN dotnet build "API.csproj" -o /app/build
+WORKDIR "/src/API"
+RUN dotnet build "API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "API.csproj" -o /app/publish
+RUN dotnet publish "API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

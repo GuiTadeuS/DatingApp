@@ -1,17 +1,19 @@
-FROM node:21-alpine
+FROM node:18 as build
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm i --legacy-peer-deps
+RUN npm i 
 
 COPY . .
 
 RUN npm run build
 
-EXPOSE 4000
+FROM nginx:alpine
 
-USER node
+COPY --from=build /app/dist/client /usr/share/nginx/html
 
-CMD ["node", "dist/client/server/main.js"]
+EXPOSE 100
+
+CMD ["nginx", "-g", "daemon off;"]

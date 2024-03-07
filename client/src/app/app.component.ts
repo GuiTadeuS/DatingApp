@@ -15,7 +15,7 @@ import { User } from './interfaces/user';
 })
 export class AppComponent implements OnInit {
 
-  title: string = 'Dating App';
+  title: string = 'A';
 
   users: User[] = [];
 
@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
   // happens after the constructor
   ngOnInit(): void {
     //
-    this.http.get<User[]>('https://localhost:5001/api/users').subscribe({
+    this.http.get<User[]>('https://localhost:8080/api/users').subscribe({
       next: data => this.users = data,
       error: error => console.error('Error:', error),
       complete: () => console.log("Request has completed")

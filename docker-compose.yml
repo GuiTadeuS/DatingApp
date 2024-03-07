@@ -1,9 +1,5 @@
 version: '3.8'
 
-networks:
-  dating:
-    driver: bridge
-
 services:
   client:
     image: client:latest
@@ -14,30 +10,23 @@ services:
       context: client/.
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
-    networks:
-      - dating
+      - "4000:100"
 
   api:
-    # image: api:latest
     container_name: api_container
     restart: always
     depends_on:
-      postgres:
-        condition: service_healthy
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 5; done; dotnet WebApi.dll'
+      - "postgres"
     build:
-      context: API/.
+      context: ./
       dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - 8080:8080
     links:
       - postgres
     environment:
       ConnectionStrings:DefaultConnection: "Server=localhost;Port=5432;Database=DatingApp;User Id=postgres;Password=eldenring"
       ConnectionStrings:IdentityConnection: "Server=localhost;Port=5432;Database=DatingApp;User Id=postgres;Password=eldenring"
-    networks:
-      - dating
 
   postgres:
     container_name: pg_container
@@ -51,13 +40,6 @@ services:
       - 5432:5432
     volumes:
       - dbdata1:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U root -d contactdb" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - dating
 
   pgadmin:
     container_name: pg_admin_container
@@ -68,20 +50,6 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - 5050:80
-    networks:
-      - dating
 
-  nginx:
-    #name of the fourth service
-    container_name: loadbalancer_nginx
-    build: loadbalancer # specify the directory of the Dockerfile
-    restart: always
-    ports:
-      - "80:80"
-    links:
-      - api
-      - client
-    networks:
-      - dating
 volumes:
   dbdata1:
