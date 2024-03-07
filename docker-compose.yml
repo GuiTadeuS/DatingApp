@@ -10,7 +10,7 @@ services:
       context: client/.
       dockerfile: Dockerfile
     ports:
-      - "4000:100"
+      - "4000:4000"
 
   api:
     container_name: api_container
@@ -25,8 +25,7 @@ services:
     links:
       - postgres
     environment:
-      ConnectionStrings:DefaultConnection: "Server=localhost;Port=5432;Database=DatingApp;User Id=postgres;Password=eldenring"
-      ConnectionStrings:IdentityConnection: "Server=localhost;Port=5432;Database=DatingApp;User Id=postgres;Password=eldenring"
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres"
 
   postgres:
     container_name: pg_container
@@ -50,6 +49,16 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - 5050:80
+  
+  nginx: 
+    container_name: loadbalancer_nginx
+    build: loadbalancer 
+    restart: always
+    ports:
+      - 80:80 
+    links:
+      - api
+      - client
 
 volumes:
   dbdata1:
