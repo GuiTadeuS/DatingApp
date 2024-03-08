@@ -10,7 +10,7 @@ services:
       context: client/.
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - "80:80"
 
   api:
     container_name: api_container
@@ -21,22 +21,22 @@ services:
       context: ./
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - "8080:8080"
     links:
       - postgres
     environment:
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Username=postgres;Password=postgres;Database=postgres"
 
   postgres:
     container_name: pg_container
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: contactdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - dbdata1:/var/lib/postgresql/data
 
@@ -48,17 +48,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - 5050:80
-  
-  nginx: 
-    container_name: loadbalancer_nginx
-    build: loadbalancer 
-    restart: always
-    ports:
-      - 80:80 
-    links:
-      - api
-      - client
+      - "5050:80"
 
 volumes:
   dbdata1:

@@ -1,23 +1,11 @@
-FROM node:21-alpine as builder
-
-WORKDIR /app
-
-COPY package*.json  ./
-
-RUN npm i --legacy-peer-deps
-
+# syntax=docker/dockerfile:1
+FROM node:20-alpine as angular
+WORKDIR /ng-app
+COPY package*.json .
+RUN npm ci
 COPY . .
-
 RUN npm run build
 
-FROM node:21-alpine
-
-COPY --from=builder /app /app
-
-WORKDIR /app
-
-EXPOSE 4000
-
-USER node
-
-CMD ["node", "dist/client/server/main.js"]
+FROM nginx:alpine
+COPY --from=angular /ng-app/dist/client/browser /usr/share/nginx/html
+EXPOSE 80
