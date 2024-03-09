@@ -1,11 +1,12 @@
-# syntax=docker/dockerfile:1
-FROM node:20-alpine as angular
-WORKDIR /ng-app
-COPY package*.json .
-RUN npm ci
+# Stage 1
+FROM node:alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
 COPY . .
 RUN npm run build
 
+# Stage 2
 FROM nginx:alpine
-COPY --from=angular /ng-app/dist/client/browser /usr/share/nginx/html
-EXPOSE 80
+COPY --from=build /app/dist/client/browser /usr/share/nginx/html
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf

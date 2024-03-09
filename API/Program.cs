@@ -47,11 +47,19 @@ app.UseCors(cors =>
     cors.AllowAnyHeader();
     cors.AllowAnyMethod();
     // cors.WithOrigins("https://localhost:4200", "https://localhost:5001", "http://localhost:5000");
-    cors.WithOrigins("https://localhost:4000", "http://localhost:8080", "http://localhost:4200");
+    cors.WithOrigins("https://localhost:4000", "http://localhost:8080", "http://localhost:4200", "http://localhost:80");
 });
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<DataContext>();
+    context.Database.Migrate();
+}
 
 app.Run();
