@@ -33,7 +33,7 @@ namespace API.Controllers
             var user = new AppUser
             {
                 UserName = registerDto.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)), // password hash
+                PasswordHash = hmac.ComputeHash(Encoding.Unicode.GetBytes(registerDto.Password)), // password hash
                 PasswordSalt = hmac.Key                                            // password salt randonly generated
             };
 
@@ -54,7 +54,7 @@ namespace API.Controllers
 
             using var hmac = new HMACSHA512(user.PasswordSalt);
 
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+            var computedHash = hmac.ComputeHash(Encoding.Unicode.GetBytes(loginDto.Password));
 
             for (int i=0; i < computedHash.Length; i++)
             {
