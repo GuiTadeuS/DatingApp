@@ -1,46 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using API.Data;
-using API.Interfaces;
-using API.Services;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
 
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+builder.Services.AddApplicationServices(builder.Configuration);
 
-
-builder.Services.AddControllers(option =>
-{
-    //option.ReturnHttpNotAcceptable = true;
-}).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
-
-builder.Services.AddCors();
-
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true, // Check if the token is signed by a valid key
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding
-                .Unicode.GetBytes(builder.Configuration["TokenKey"])), // Retrieve the key from the appsettings.json
-                ValidateIssuer = false, // The API server is the issuer
-                ValidateAudience = false // The client is the audience
-            };
-        }
-    );
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
 
