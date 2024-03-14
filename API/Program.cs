@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.Extensions;
 using API.Middleware;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Exporter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,20 @@ builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityServices(builder.Configuration);
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder =>
+        tracerProviderBuilder
+            .AddSource(API.DiagnosticsConfig.ActivitySource.Name)
+            .ConfigureResource(resource => resource
+                .AddService(API.DiagnosticsConfig.ServiceName))
+            .AddAspNetCoreInstrumentation()
+            .AddConsoleExporter()
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri("http://collector:4317");
+                options.Protocol = OtlpExportProtocol.Grpc;
+            }));
 
 var app = builder.Build();
 

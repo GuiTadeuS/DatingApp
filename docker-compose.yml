@@ -58,5 +58,40 @@ services:
     depends_on:
       - db
 
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./devops/tempo/tempo.yaml:/etc/tempo.yaml
+    depends_on:
+      - web-api
+
+  collector:
+    image: otel/opentelemetry-collector-contrib:0.81.0
+    container_name: collector
+    command: [ "--config=/etc/collector.yaml" ]
+    ports:
+      - "4317:4317"
+    volumes:
+      - ./devops/otel/otel-collector-config.yml:/etc/collector.yaml
+    depends_on:
+      - tempo
+
+  grafana:
+    image: grafana/grafana:10.0.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./devops/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    depends_on:
+      - collector
+      - tempo
+
 volumes:
   dbdata1:
