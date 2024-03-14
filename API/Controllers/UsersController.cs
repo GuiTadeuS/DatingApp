@@ -22,7 +22,6 @@ namespace API.Controllers
             _context = context;
         }
 
-        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUSers()

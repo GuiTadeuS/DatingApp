@@ -1,4 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build-env
+ENV LC_ALL pt_BR.UTF-8
 WORKDIR /App
 # Copy everything
 COPY . ./
