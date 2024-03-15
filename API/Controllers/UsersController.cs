@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Serilog.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using API.Interfaces;
 
 
 namespace API.Controllers
@@ -14,38 +15,29 @@ namespace API.Controllers
     public class UsersController : BaseApiController
     {
 
-        private readonly DataContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public UsersController(DataContext context)
+        public UsersController(IUserRepository userRepository)
         {
 
-            _context = context;
+            _userRepository = userRepository;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUSers()
         {
-            var users = await _context.Users.ToListAsync();
-
-            return users;
-
-
+            return Ok( await _userRepository.GetUsersAsync());
         }
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet("{id}")] // /api/users/id
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        [HttpGet("{username}")] // /api/users/username
+        public async Task<ActionResult<AppUser>> GetUser(string username)
         {
 
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return user;
+            return await _userRepository.GetUserByUsernameAsync(username);
         }
+
     }
 }
