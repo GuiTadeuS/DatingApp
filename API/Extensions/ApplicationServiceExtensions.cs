@@ -17,6 +17,11 @@ namespace API.Extensions
                 options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = config.GetConnectionString("Redis");
+            });
+
             services.AddCors();
 
             services.AddScoped<ITokenService, TokenService>();

@@ -4,6 +4,7 @@ using API.Entities;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -15,12 +16,15 @@ namespace API.Controllers
 
         private readonly ITokenService _tokenService;
 
-        public AccountController(DataContext context, ITokenService tokenService)
+        private readonly IDistributedCache _redis;
+
+        public AccountController(DataContext context, ITokenService tokenService, IDistributedCache redis)
         {
             _context = context;
 
             _tokenService = tokenService;
 
+            _redis = redis;
         }
 
         [HttpPost("register")] // api/account/register?
@@ -39,6 +43,8 @@ namespace API.Controllers
 
             _context.Users.Add(user);                                              // add user to context
             await _context.SaveChangesAsync();                                     // save changes to db
+
+            _redis.Remove("users");                                                
             return new UserDto
             {
                 Username = user.UserName,
