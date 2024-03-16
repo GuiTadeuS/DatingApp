@@ -4,12 +4,12 @@ ___
 <pre>
 *Frontend*:
     - Angular 17
-    - Nginx (Load balancer)
+    - Nginx (load balancer)
 *Backend*:
     - ASP.NET Core (using the repository pattern)
 *Database*:
-    - PostgreSQL
-    - Redis (Cache)
+    - PostgreSQL (main database)
+    - Redis (cache)
 *Observability*:
     - OpenTelemetry (data collection)
     - Grafana (visualization)
