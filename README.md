@@ -9,6 +9,7 @@ ___
     - ASP.NET Core (using the repository pattern)
 *Database*:
     - PostgreSQL
+    - Redis (Cache)
 *Observability*:
     - OpenTelemetry (data collection)
     - Grafana (visualization)
@@ -22,6 +23,8 @@ docker-compose up -d --build
 
 ##### Explanation of Technologies:
 
++ *Redis*: Cache that sits between the backend and the main database (PostgreSQL). Used to reduce database load and speed up commonly accessed user data.
+  
 + *OpenTelemetry*: Generate telemetry data (metrics, logs, and traces).
 
 + *Grafana*: Visualizing and analyzing data collected by OpenTelemetry.
