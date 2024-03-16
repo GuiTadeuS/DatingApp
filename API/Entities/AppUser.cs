@@ -36,10 +36,10 @@ namespace API.Entities
 
         public List<Photo>? Photos { get; set; } = new List<Photo>();
     
-        public int GetAge()
+/*        public int GetAge()
         {
             return DateOfBirth.CalculateAge();
-        }
+        }*/
 
     }
 }
