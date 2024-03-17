@@ -30,6 +30,8 @@ namespace API.Extensions
 
             services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+
             return services;
         }
     }
