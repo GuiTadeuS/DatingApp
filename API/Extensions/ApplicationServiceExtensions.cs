@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions
 {
-    public static class ApplicationServiceExtensions // Static == use methos without instantiating
+    public static class ApplicationServiceExtensions // Static == use methods without instantiating
     {
         // targeting the type in the signature with the "this" keyword
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,

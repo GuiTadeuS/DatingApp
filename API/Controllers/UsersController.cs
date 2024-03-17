@@ -1,12 +1,11 @@
-﻿using API.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using API.Interfaces;
 using AutoMapper;
 using API.DTOs;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
-using System.Text;
+using System.Security.Claims;
 
 
 namespace API.Controllers
@@ -66,11 +65,29 @@ namespace API.Controllers
 
             user = await _userRepository.GetMemberAsync(username);
 
+            if (user == null) return NotFound();
+
             await _redis.SetStringAsync(username, JsonConvert.SerializeObject(user));
 
             return user;
 
         }
 
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+        {
+            // "User" currently authenticated user
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+
+            if (user == null) return NotFound();
+
+            _mapper.Map(memberUpdateDto, user);
+
+            if (await _userRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to update user.");
+        }
     }
 }

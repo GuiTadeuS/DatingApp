@@ -14,6 +14,8 @@ namespace API.Helpers
                 receives => receives.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ForMember(member => member.Age, receives => receives.MapFrom(src => src.DateOfBirth.CalculateAge()));
             CreateMap<Photo, PhotoDto>();
+
+            CreateMap<MemberUpdateDto, AppUser>(); // Used for UPDATES, so it goes from the DTO that receives the data to the entity
         }
     }
 }
