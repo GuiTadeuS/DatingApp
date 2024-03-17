@@ -19,8 +19,7 @@ namespace API.Extensions
                     ValidateIssuer = false, // The API server is the issuer
                     ValidateAudience = false // The client is the audience
                 };
-            }
-    );
+            });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
