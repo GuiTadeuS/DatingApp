@@ -2,6 +2,7 @@
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -18,11 +19,15 @@ namespace API.Controllers
 
         private readonly IDistributedCache _redis;
 
-        public AccountController(DataContext context, ITokenService tokenService, IDistributedCache redis)
+        private readonly IMapper _mapper;
+
+        public AccountController(DataContext context, ITokenService tokenService, IMapper mapper,IDistributedCache redis)
         {
             _context = context;
 
             _tokenService = tokenService;
+
+            _mapper = mapper;
 
             _redis = redis;
         }
@@ -34,21 +39,22 @@ namespace API.Controllers
 
             using var hmac = new HMACSHA512(); // password salt
 
-            var user = new AppUser
-            {
-                UserName = registerDto.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.Unicode.GetBytes(registerDto.Password)), // password hash
-                PasswordSalt = hmac.Key                                            // password salt randonly generated
-            };
+            var user = _mapper.Map<AppUser>(registerDto); // Go to AppUser from registerDto
+
+            user.UserName = registerDto.Username.ToLower();
+            user.PasswordHash = hmac.ComputeHash(Encoding.Unicode.GetBytes(registerDto.Password));
+            user.PasswordSalt = hmac.Key;
 
             _context.Users.Add(user);                                              // add user to context
             await _context.SaveChangesAsync();                                     // save changes to db
 
-            _redis.Remove("users");                                                
+            _redis.Remove("users");        
+            
             return new UserDto
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                KnownAs = user.KnownAs,
             };
         }
         [HttpPost("login")]
@@ -70,7 +76,8 @@ namespace API.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                PhotoUrl = user.Photos?.FirstOrDefault(x => x.IsMain)?.Url
+                PhotoUrl = user.Photos?.FirstOrDefault(x => x.IsMain)?.Url,
+                KnownAs = user.KnownAs,
             };
         }
         private async Task<bool> UserExists(string username)

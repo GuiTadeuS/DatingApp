@@ -16,6 +16,8 @@ namespace API.Helpers
             CreateMap<Photo, PhotoDto>();
 
             CreateMap<MemberUpdateDto, AppUser>(); // Used for UPDATES, so it goes from the DTO that receives the data to the entity
+
+            CreateMap<RegisterDto, AppUser>(); // Transformes the registerDto into the AppUser entity
         }
     }
 }
