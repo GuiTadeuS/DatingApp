@@ -33,10 +33,8 @@ namespace API.Services
                     Folder = "DatingApp"
                 };
                 uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-                return uploadResult;
-
             }
+            return uploadResult;
         }
 
         public async Task<DeletionResult> DeletePhotoAsyc(string publicId)
