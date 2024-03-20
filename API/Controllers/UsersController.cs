@@ -90,6 +90,8 @@ namespace API.Controllers
 
             _mapper.Map(memberUpdateDto, user);
 
+            _redis.Remove(username);
+
             if (await _userRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to update user.");
@@ -118,7 +120,10 @@ namespace API.Controllers
 
             user?.Photos?.Add(photo);
 
+            _redis.Remove(username);
+
             if (await _userRepository.SaveAllAsync()) return _mapper.Map<PhotoDto>(photo);
+
 
             return BadRequest("Problem adding photo");
         }
