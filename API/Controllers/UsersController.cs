@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Security.Claims;
 using API.Extensions;
 using API.Entities;
+using API.Helpers;
 
 
 namespace API.Controllers
@@ -34,20 +35,11 @@ namespace API.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
         {
-            var cachedUsers = await _redis.GetStringAsync("users");
+            var users = await _userRepository.GetMembersAsync(userParams);
 
-            IEnumerable<MemberDto>? users;
-
-            if (!string.IsNullOrWhiteSpace(cachedUsers))
-            {
-                users = JsonConvert.DeserializeObject<IEnumerable<MemberDto>>(cachedUsers);
-                return Ok(users);
-            }
-            users = await _userRepository.GetMembersAsync();
-
-            await _redis.SetStringAsync("users", JsonConvert.SerializeObject(users));
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
 
             return Ok(users);
         }
