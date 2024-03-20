@@ -99,6 +99,8 @@ namespace API.Controllers
             return BadRequest("Failed to update user.");
         }
 
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDto>> AddPhoto (IFormFile file)
         {
@@ -124,8 +126,12 @@ namespace API.Controllers
 
             _redis.Remove(username);
 
-            if (await _userRepository.SaveAllAsync()) return _mapper.Map<PhotoDto>(photo);
-
+            if (await _userRepository.SaveAllAsync()) 
+            {
+                return CreatedAtAction(nameof(GetUser),
+                    new { username = user?.UserName }, _mapper.Map<PhotoDto>(photo));
+                    // returns the location with the route parameter username in the headers and the new photo in the body
+            }
 
             return BadRequest("Problem adding photo");
         }
