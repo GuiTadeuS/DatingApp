@@ -145,7 +145,7 @@ namespace API.Controllers
 
             if(user==null) return NotFound();
 
-            var photo = user?.Photos?.FirstOrDefault(x => x.Id == photo);
+            var photo = user?.Photos?.FirstOrDefault(x => x.Id == photoId);
 
             if(photo == null) return NotFound();
 
@@ -162,6 +162,34 @@ namespace API.Controllers
             if (await _userRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to set main photo.");
+        }
+
+        [HttpDelete("delete-photo/{photoId}")]
+        public async Task<ActionResult> DeletePhoto(int photoId)
+        {
+            var username = User.GetUsername();
+
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+
+            if(user==null) return NotFound();
+
+            var photo = user?.Photos?.FirstOrDefault(x => x.Id == photoId);
+
+            if(photo.IsMain) return BadRequest("You cannot delete your main photo");
+
+            if (photo.PublicId != null)
+            {
+                var result = await _photoService.DeletePhotoAsyc(photo.PublicId);
+                if (result.Error != null) return BadRequest(result.Error.Message);
+            }
+
+            user?.Photos?.Remove(photo); // Just remove from the list of photos, EF will take care of the rest
+
+            if (await _userRepository.SaveAllAsync()) return Ok();
+
+            _redis.Remove(username);
+
+            return BadRequest("Failed to delete the photo");
         }
     }
 }
