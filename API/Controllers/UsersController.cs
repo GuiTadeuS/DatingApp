@@ -39,6 +39,12 @@ namespace API.Controllers
         {
             var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
 
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine($"name from sql username {currentUser.UserName}");
+
+            Console.WriteLine($"name from claims {User.GetUsername()}");
+            Console.WriteLine("-------------------------------------------------");
+
             userParams.CurrentUsername = currentUser.UserName;
 
             var users = await _userRepository.GetMembersAsync(userParams);
