@@ -32,6 +32,6 @@
             set => _maxAge = value < 99 ? value : 99;
         }
 
-
+        public string OrderBy { get; set; } = "lastActive";
     }
 }
