@@ -23,7 +23,7 @@ namespace API.Data
 
             builder.Entity<UserLike>()
                 .HasOne(s => s.SourceUser)
-                .WithMany(l => l.LikedUser)
+                .WithMany(l => l.LikedUsers)
                 .HasForeignKey(s => s.SourceUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
