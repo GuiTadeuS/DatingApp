@@ -1,16 +1,15 @@
 ﻿using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 
 namespace API.Data
 {
     public class Seed
     {
-        public static async Task SeedUsers(DataContext context)
+        public static async Task SeedUsers(UserManager<AppUser> userManager)
         {
-            if (await context.Users.AnyAsync()) return; // If there are any users in the database, return
+            if (await userManager.Users.AnyAsync()) return; // If there are any users in the database, return
             var userData = await File.ReadAllTextAsync("Migrations/UserSeedData.json");
 
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -19,18 +18,11 @@ namespace API.Data
 
             foreach (var user in users)
             {
-                using var hmac = new HMACSHA512();
-
                 user.UserName = user.UserName.ToLower();
 
-                user.PasswordHash = hmac.ComputeHash(Encoding.Unicode.GetBytes("Pa55w@rd"));
-                
-                user.PasswordSalt = hmac.Key;
-
-                context.Users.Add(user);
+                await userManager.CreateAsync(user, "Pa55w@rd"); // Create and save
+            
             }
-
-            await context.SaveChangesAsync();
         }
     }
 }

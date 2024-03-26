@@ -5,6 +5,8 @@ using API.Middleware;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Exporter;
+using API.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,8 +61,9 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<DataContext>();
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
         context.Database.Migrate();
-        await Seed.SeedUsers(context);
+        await Seed.SeedUsers(userManager);
     }
     catch (Exception e)
     {
