@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240325231850_MessageEntityAdded")]
+    partial class MessageEntityAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,7 +91,7 @@ namespace API.Migrations
                     b.Property<DateTime?>("DateRead")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("MessageSent")
+                    b.Property<DateTime?>("MessageSent")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("RecipientDeleted")
@@ -97,7 +100,7 @@ namespace API.Migrations
                     b.Property<int>("RecipientId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("RecipientUsername")
+                    b.Property<string>("RecipientName")
                         .HasColumnType("text");
 
                     b.Property<bool>("SenderDeleted")
@@ -106,7 +109,7 @@ namespace API.Migrations
                     b.Property<int>("SenderId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("SenderUsername")
+                    b.Property<string>("SenderName")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

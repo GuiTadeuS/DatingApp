@@ -18,6 +18,13 @@ namespace API.Helpers
             CreateMap<MemberUpdateDto, AppUser>(); // Used for UPDATES, so it goes from the DTO that receives the data to the entity
 
             CreateMap<RegisterDto, AppUser>(); // Transformes the registerDto into the AppUser entity
+
+            CreateMap<Message, MessageDto>()
+                .ForMember(message => message.SenderPhotoUrl, receives => receives.MapFrom(src => src.Sender.Photos
+                .FirstOrDefault(x => x.IsMain).Url))
+                .ForMember(message => message.RecipientPhotoUrl, receives => receives.MapFrom(src => src.Recipient.Photos
+                .FirstOrDefault(x => x.IsMain).Url));
+
         }
     }
 }
